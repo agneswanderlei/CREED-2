@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Ofícios</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Relatório de Ofícios</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nº Ofício</th>
+                <th>Nº SEI</th>
+                <th>Data</th>
+                <th>Tipo de Prisão</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for oficio in oficios %}
+            <tr>
+                <td>{{ oficio.n_oficios }}</td>
+                <td>{{ oficio.n_sei }}</td>
+                <td>{{ oficio.date_send|date:"d/m/Y" }}</td>
+                <td>{{ oficio.tipo_prisao }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

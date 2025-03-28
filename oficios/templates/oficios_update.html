@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Alterar Oficios{% endblock title %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mt-5 mb-5"></div>
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Atualizar Oficio Nº {{object.n_oficios}}</h2>
+        <hr>
+        <div class="row ">
+          <div class="col-2">
+            <label >Nº Oficio</label>
+            {{form.n_oficios}}
+          </div>
+          <div class="col-2">
+            <label >Data do Ofício</label>
+            {{form.date_send}}
+    
+          </div>
+          <div class="col-3">
+            <label >Nº do SEI</label>
+            {{form.n_sei}}
+          </div>
+          <div class="col-2">
+            <label >Remetente</label>
+            {{form.orgao}}
+          </div>
+          <div class="col-3">
+            <label class="ps-1">Tipo de Prisão</label>
+            {{form.tipo_prisao}}
+          </div>
+
+        </div>
+        <div class="d-flex justify-content-center ">
+          <h3 class="">Envolvidos</h3>
+        </div>
+        <div class="d-flex mt-2">
+          {{form.n_pront_presos}}
+        </div>
+        <hr>
+        <div id="listapresos">
+          {% include 'partials/list_add_presos.html' %}
+        </div>
+        <hr>
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <label >Descrição do Ofício</label>
+            {{form.descricao}}
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <label>Anexos</label>
+              {{ form.anexos }} <!-- Adicionando o campo de anexos aqui -->
+            </div>
+          </div>
+          
+        </div>
+        <hr>
+        <div class="">
+          <button class="btn btn-success" type="submit">Salvar</button>
+          <a href="{% url 'oficios_list' %}" class="btn btn-secondary">Voltar</a>
+        </div>
+      </div>
+    </div>
+  </form>
+  <style>
+   
+    /* Cor de fundo das opções */
+    .select2-container--default .select2-results__option {
+        background-color: #212529;
+        color: #cccccc;
+    }
+    
+    .select2-container--default .select2-selection--multiple {
+        background-color: #212529;
+        color: #cccccc;
+        border: 1px solid #405057;
+        
+    }
+    .select2-container--default .select2-selection__choice__display {
+        
+        color: #212529;
+    }
+  </style>
+  
+  <!-- <script>
+    $(document).ready(function() {
+      $('#id_n_pront_presos').select2();
+    });
+
+  </script> -->
+  <script>
+    $(document).ready(function() {
+        $('#id_n_pront_presos').select2({
+            ajax: {
+                url: "{% url 'oficios_update' form.instance.id %}", // Certifique-se que esta URL está correta
+                dataType: 'json',
+                delay: 250, // Aguarda 250ms antes de enviar a requisição
+                data: function(params) {
+                    return {
+                        q: params.term // Termo que o usuário digitou
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {id: item.number_doc, text: item.number_doc + ' - ' + item.name_full};
+                        }) // O formato precisa corresponder ao JSON da sua view
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Digite o Nº do prontuário',
+            minimumInputLength: 1 // Só envia requisições com pelo menos 1 caractere
+        });
+    });
+  </script>
+  {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endblock content %}

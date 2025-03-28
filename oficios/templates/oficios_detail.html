@@ -1,0 +1,70 @@
+<div class="modal-header">
+    <h1 class="modal-title fs-5" id="exampleModalLabel">Detalhe do Oficio</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <div class="border border-light-subtle rounded p-2 mt-2">
+            
+            <div class="" id="linha01">
+                <h5 class="">Nº Oficios: {{object.n_oficios}}</h5><br>
+                <h5>Remetente: {{object.orgao}}</h5><br>
+                <h5>Tipo de Prisao: {{object.tipo_prisao}}</h5><br>
+                <h5>Envoldidos:</h5>
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-striped table-sm table-hover w-100">
+                        <thead>
+                            <tr>
+                                <th>Nº Documento</th>
+                                <th>Posto/Graduação</th>
+                                <th>Nome Completo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for preso in object.n_pront_presos.all %}
+                            <tr>
+                                <td>{{ preso.number_doc }}</td>
+                                <td>{{ preso.posto_grad }}</td>
+                                <td>{{ preso.name_full }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3">Nenhum preso envolvido</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr>
+            <div class="" id="linha01">
+                <h5>Descrição do Ofício</h3>
+                {{object.descricao}}
+                
+            </div>
+            <hr>
+            <div class="" id="linha01">
+                <h5>Documento Anexado</h5>
+                {% if object.anexos %}
+                    <div class="d-flex align-items-center">
+                        <a href="{{ object.anexos.url }}" class="btn btn-primary" download>Download</a>
+                        <p class="ms-3">{{ object.anexos.name|slice:"10:" }}</p>
+                    </div>
+                {% else %}
+                    <p>Nenhum documento anexado.</p>
+                {% endif %}
+            </div>
+
+        </div>
+        
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+</div>
+
+
+

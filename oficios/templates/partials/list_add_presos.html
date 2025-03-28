@@ -1,0 +1,21 @@
+<ul class="list-group col-5">
+    
+    {% if presosnamexs %}
+        {% for preso in presosnamexs %}
+            <li class="list-group-item d-flex justify-content-between align-items-center" id="">
+                {{preso.name}}
+                
+                <span 
+                    class="btn btn-danger btn-sm"
+                    style="cursor: pointer"
+                    hx-post="{% url 'delpresosx' preso.pk %}"
+                    hx-target="#listapresos"
+                    hx-confirm="Are you sure you wish to delete?">
+                X
+                </span>
+            </li>
+        
+        {% endfor %}
+    {% endif %}
+    
+</ul>

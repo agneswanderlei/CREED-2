@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Adicionar Oficios
+{% endblock title %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mt-5 mb-5"></div>
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Cadastrar Oficios</h2>
+        <hr>
+        <div class="row ">
+          <div class="col-2">{{ form.n_oficios.label }}: {{ form.n_oficios }}</div>
+          <div class="col-2">{{ form.date_send.label }}: {{ form.date_send }}</div>
+          <div class="col-3">{{ form.n_sei.label }}: {{ form.n_sei }}</div>
+          <div class="col-2">{{ form.orgao.label }}: {{ form.orgao }}</div>
+          <div class="col-3">{{ form.tipo_prisao.label }}: {{ form.tipo_prisao }}</div>
+
+        </div>
+        <div class="d-flex justify-content-center ">
+          <h3 class="">Envolvidos</h3>
+        </div>
+        <div class="d-flex mt-2">
+          <div class="col-3 d-flex justify-content-between">
+            <input type="text" class="form-control" name="n_prontuario">
+            <a class="btn btn-info ms-1 btn-sm" hx-post="{% url 'listpresosx' %}" hx-target="#nomepreso">
+              <i class="bi bi-search"></i>
+            </a>
+            <button class="btn btn-success ms-1 btn-sm" type="submit" >
+              <i class="bi bi-plus-circle  "></i>
+            </button>
+            
+            
+          </div>
+          <div class="col-6 ms-2 d-flex align-items-center" id="nomepreso">
+            joao da silva  
+          </div>
+        </div>
+        <hr>
+        <hr>
+        <div class="row mt-2">
+          <div class="col-md-12">{{ form.descricao.label }}: {{ form.descricao }}</div>
+          
+        </div>
+        <hr>
+        <div class="">
+          <button class="btn btn-success" type="submit">Salvar</button>
+          <a href="{% url 'oficios_list' %}" class="btn btn-secondary">Voltar</a>
+        </div>
+        {% if form.errors %}
+          <div class="alert alert-danger mt-4">
+              <ul class="mb-0">
+                  {% for field in form %}
+                      {% for error in field.errors %}
+                          <li>{{ error }}</li>
+                      {% endfor %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                      <li>{{ error }}</li>
+                  {% endfor %}
+              </ul>
+          </div>
+        {% endif %}  
+        
+      </div>
+    </div>
+  </form>
+
+  
+  
+{% endblock content %}
+{% block script %}
+  <script>
+    $('#id_n_pront_presoss').select2();
+  </script>
+{% endblock script %}

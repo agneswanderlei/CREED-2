@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login - Creed{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="app\templates\static\user\css\user.css">
+    <link rel="stylesheet" href="app\templates\static\user\img">
+{% endblock head %}
+
+{% block content %}
+    <section class="vh-100">
+        <div class="container py-5 h-100">
+          <div class="row d-flex align-items-center justify-content-center h-100">
+            <div class="col-md-8 col-lg-7 col-xl-6">
+              <img src="{% static 'user\img\logoCREED.png' %}"
+                class="img-fluid" alt="Phone image">
+            </div>
+            <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+              <form method="post">
+                {% csrf_token %}
+                <!-- Email input -->
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <label class="form-label" for="form1Example13">Usuário</label>
+                    <input type="text" id="form1Example13" class="form-control form-control-lg" id="username" name="username" required/>
+                </div>
+    
+                <!-- Password input -->
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <label class="form-label" for="form1Example23">Senha</label>
+                    <input type="password" id="password" name="password" class="form-control form-control-lg" required/>
+                </div>  
+                <!-- Submit button -->
+                <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block">Fazer Login</button>
+              </form>
+              {% if form.errors %}
+                <div class="alert alert-danger mt-4">
+                    <ul class="mb-0">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+              {% endif %}              
+            </div>
+          </div>
+        </div>
+      </section>
+{% endblock %}

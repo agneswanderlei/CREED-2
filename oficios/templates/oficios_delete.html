@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container-fluid mt-5">
+        <div class="border border-light-subtle rounded p-2 mt-2">
+            
+            <div class="" id="linha01">
+                <h5 class="">Nº Oficios: {{object.n_oficios}}</h5><br>
+                <h5>Remetente: {{object.orgao}}</h5><br>
+                <h5>Tipo de Prisao: {{object.tipo_prisao}}</h5><br>
+                <h5>Envoldidos:</h5>
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-striped table-sm table-hover w-100">
+                        <thead>
+                            <tr>
+                                <th>Nº Documento</th>
+                                <th>Posto/Graduação</th>
+                                <th>Nome Completo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for preso in object.n_pront_presos.all %}
+                            <tr>
+                                <td>{{ preso.number_doc }}</td>
+                                <td>{{ preso.posto_grad }}</td>
+                                <td>{{ preso.name_full }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3">Nenhum preso envolvido</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr>
+            <div class="" id="linha01">
+                <h5>Descrição do Ofício</h3>
+            </div>
+            {{object.descricao}}
+        </div>
+        
+        <div class=" d-flex justify-content-end">
+            <form action="" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger mt-2 me-3">Deletar</button>
+                <a href="{% url 'presos_list' %}" class="btn btn-secondary mt-2">Voltar</a>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
+

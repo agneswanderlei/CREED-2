@@ -1,0 +1,72 @@
+
+<!-- <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #FF8C00;">
+    <div class="container-fluid ">
+        <a href="#" class="navbar-brand" style="margin: 0 auto; text-align: center;">Sistema de Controle de Presos no CREED - SCPC</a>
+    </div>
+</nav> -->
+
+<nav class="navbar bg-danger fixed-top navbar ">
+    <div class="container-fluid">
+        {% if user.is_authenticated %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>        
+        {% endif %}
+        <a class="navbar-brand" href="#" style="margin: 0 auto; text-align: start;">Sistema de Controle de Presos no CREED - SCPC</a>
+        {% if user.is_authenticated %}
+        <h5 class="navbar-brand" href="#offcanvasUser" data-bs-toggle="offcanvas"> 
+          <i class="bi bi-person-circle navbar-brand"></i>
+          
+          {{request.user.first_name}}        
+        </h5>        
+        {% endif %}
+        
+      <div class="offcanvas offcanvas-start w-auto" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body ">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <hr>
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page" href="{% url 'home' %}">
+                <i class="bi bi-house fs-4 align-middle"></i> 
+                <span class="ms-1 align-middle">Home</span> 
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page" href="{% url 'presos_list' %}">
+                <i class="bi bi-people fs-4 align-middle"></i> 
+                <span class="ms-1 align-middle">Presos</span> 
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page" href="{% url 'oficios_list' %}">
+                <i class="bi bi-envelope-paper fs-4 align-middle"></i> 
+                <span class="ms-1 align-middle">Ofícios</span> 
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page" href="{% url 'relatorio' %}">
+                <i class="bi bi-newspaper fs-4 align-middle"></i> 
+                <span class="ms-1 align-middle">Relatórios</span> 
+              </a>
+            </li>
+            <li class="nav-item">
+              <form action="{% url 'logout' %}" method="post" id="logout-form" class="nav-link px-0 align-middle">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link text-decoration-none text-reset nav-link px-0 align-middle">
+                  <i class="bi bi-box-arrow-right fs-4 align-middle"></i>
+                  <span class="ms-1 align-middle">Sair</span>
+                </button>
+              </form>              
+            </li>
+            
+          </ul>          
+        </div>
+      </div>
+
+      
+    </div>
+  </nav>

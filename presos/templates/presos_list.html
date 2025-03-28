@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Presos
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid mt-5 align-content-center">
+  <!-- Filtros -->
+  <form action="{% url 'presos_list' %}" method="get">
+    <div class="row mb-3">
+       
+      <div class="input-group">
+        <input class="form-control" type="text" name="name" value="{{ request.GET.name }}" placeholder="Nome">          
+        <input class="form-control" type="text" name="number_doc" value="{{ request.GET.number_doc }}" placeholder="Nº Doc.">
+        <select name="posto" class="form-select">
+          <option value="" {% if not request.GET.posto %} selected {% endif %} >Postos</option>
+          {% for posto in postos %}
+            <option value="{{posto.id}}" {% if request.GET.posto == posto.id|stringformat:'s' %} selected {% endif %}> {{posto.name}} </option>
+          {% endfor %}
+        </select>
+        <select name="estado" class="form-select">
+          <option value="" {% if not request.GET.estado %} selected {% endif %} >Estados</option>
+          {% for estado in estados %}
+            <option value="{{estado.id}}" {% if request.GET.estado == estado.id|stringformat:'s' %} selected {% endif %}> {{estado.name}} </option>
+          {% endfor %}
+        </select>
+        <select name="instituicao" class="form-select">
+          <option value="" {% if not request.GET.instituicao %} selected {% endif %} >Instituições</option>
+          {% for instituicao in instituicoes %}
+            <option value="{{instituicao.id}}" {% if request.GET.instituicao == instituicao.id|stringformat:'s' %} selected {% endif %}> {{instituicao.name}} </option>
+          {% endfor %}
+        </select>        
+        <button type="submit" class="btn btn-primary float-end " style="margin-right: 10px;">
+          <i class="bi bi-search"></i> Pesquisar
+        </button>
+      </div>      
+      
+      <div class="row mt-2">
+        <div class="col d-flex justify-content-start ms-1">
+          <a href="{% url 'presos_add' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Adicionar Preso
+          </a>
+        </div>
+      </div>    
+    </div>
+  </form>
+  
+  <!-- Button trigger modal -->
+  
+
+  
+  
+
+  <!-- table -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped table-sm table-hover w-100">
+      <thead class="thead-dark">
+        <tr>
+          <th>Nº Identificação</th>
+          <th>Posto/Graduação</th>
+          <th>Nome Completo</th>
+          <th>Instituição</th>
+          <th>Estado</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody id="tablelistbody">
+        {% for preso in presos %}
+          <tr>
+            <td>{{ preso.number_doc }}</td>
+            <td>{{ preso.posto_grad }}</td>
+            <td>{{ preso.name_full|upper }}</td>
+            <td>{{ preso.institutions }}</td>
+            <td>{{ preso.state_origin }}</td>
+            <td>
+              <a href="#" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#ModalPresosDetail" hx-get="{% url 'presos_detail' preso.number_doc %}" hx-target="#detailcontent">
+                <i class="bi bi-eye-fill"></i>
+              </a>
+              
+              <a href="{% url 'presos_update' preso.number_doc %}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <a href="{% url 'presos_delete' preso.number_doc %}" class="btn btn-danger btn-sm">
+                <i class="bi bi-trash-fill"></i>
+              </a>
+            </td>
+          </tr>
+        
+        {% endfor %}
+      </tbody>
+    </table>
+  </div> 
+  
+  <!-- Modal Detail-->
+  <div class="modal fade mt-5 modal-xl" id="ModalPresosDetail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div id="detailcontent" class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Detalhe do Prisioneiro</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+          ... 
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalteste"></div>
+
+{% endblock content %}
+

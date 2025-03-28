@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Adicionar Oficios
+{% endblock title %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mt-5 mb-5"></div>
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Cadastrar Oficios</h2>
+        <hr>
+        <div class="row ">
+          <div class="col-2">
+            <label >Nº Oficio</label>
+            <input type="text" class="form-control" name="n_oficios" required>
+          </div>
+          <div class="col-2">
+            <label >Data do Ofício</label>
+            <input type="date" class="form-control" name="date_oficios" required>
+          </div>
+          <div class="col-3">
+            <label >Nº do SEI</label>
+            <input type="text" class="form-control" name="n_sei" required>
+          </div>
+          <div class="col-2">
+            <label >Remetente</label>
+            <input type="text" class="form-control" name="n_remetente" required>
+          </div>
+          <div class="col-3">
+            <label class="ps-1">Tipo de Prisão</label>
+            <select class="form-select" aria-label="Default select example" id="tipo_prisao">
+              <option value='' selected>------</option>
+              <option value="ABERTA">Aberta</option>
+              <option value="FECHADA">Fechada</option>
+              <option value="SEMIABERTA">Semiaberta</option>
+              <option value="HARMONIZADA">Harmonizada</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="d-flex justify-content-center ">
+          <h3 class="">Envolvidos</h3>
+        </div>
+        <div class="d-flex mt-2">
+          <div class="col-3 d-flex justify-content-between">
+            <input type="text" class="form-control" name="n_prontuario" placeholder="Nº prontuario">
+            
+            <a class="btn btn-info ms-1 btn-sm" hx-post="{% url 'listpresosx' %}" hx-target="#nomepreso">
+              <i class="bi bi-search"></i>
+            </a>
+            <a class="btn btn-success ms-1 btn-sm d-flex justify-content-center align-content-center" hx-post="{% url 'addpresosx' %}" hx-target="#listapresos" hx-swap="innerHTML">
+              <i class="bi bi-plus-circle  "></i>
+            </a>
+            
+            
+          </div>
+          <div class="col-6 ms-2 d-flex align-items-center" id="nomepreso">
+              
+          </div>
+        </div>
+        <hr>
+        <div id="listapresos">
+          {% include 'partials/list_add_presos.html' %}
+        </div>
+        <hr>
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <label >Descrição do Ofício</label>
+            <textarea class="form-control form-control-lg h-auto" name="desc_oficios" id="" rows="10"></textarea>
+          </div>
+          
+        </div>
+        <hr>
+        <div class="">
+          <button class="btn btn-success" type="submit">Salvar</button>
+          <a href="{% url 'oficios_list' %}" class="btn btn-secondary">Voltar</a>
+        </div>
+        {% if form.errors %}
+          <div class="alert alert-danger mt-4">
+              <ul class="mb-0">
+                  {% for field in form %}
+                      {% for error in field.errors %}
+                          <li>{{ error }}</li>
+                      {% endfor %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                      <li>{{ error }}</li>
+                  {% endfor %}
+              </ul>
+          </div>
+        {% endif %}  
+        
+      </div>
+    </div>
+  </form>
+
+  
+  
+{% endblock content %}
