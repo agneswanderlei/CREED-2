@@ -7,60 +7,67 @@
 {% block content %}
 <div class="container-fluid mt-5 align-content-center">
   <!-- Filtros -->
-   <h3>Relatórios</h3>
-   <form  method="get" action="{% url 'presos_detail' %}">
-     <div class="row mb-3">
-       
-       <div class="input-group">
-         <div class="col- form-control ms-0 p-0">
-           <label class="ms-1">Nº do Prontuário</label>
-           <input class="form-control" type="text" name="n_pront" value="{{ request.GET.n_pront }}">          
-         </div>
-         <div class="col- form-control ms-0 p-0">
-           <label class="ms-1">Nº Ofcio</label>
-           <input class="form-control" type="text" name="n_oficio" value="{{ request.GET.n_oficio }}">          
-         </div>
-         <div class="col form-control ms-0 p-0 ">
-           <label class="ps-1">Nº SEI</label>
-           <input class="form-control" type="text" name="n_sei" value="{{ request.GET.n_sei }}">
-         </div>
-         <div class="col form-control ms-0 p-0 ">
-           <label class="ps-1">Data Incial</label>
-           <input class="form-control" type="date" name="date_send1" id="" value="{{request.GET.date_send1}}" placeholder="Data Início">
-         </div>
-         <div class="col form-control ms-0 p-0 ">
-           <label class="ps-1">Data Final</label>
-           <input class="form-control" type="date" name="date_send2" id="" value="{{request.GET.date_send2}}" placeholder="Data Início">
-         </div>
-         <div class="col form-control ms-0 p-0">
-           <label class="ps-1">Tipo de Prisão</label>
-           <select class="form-select" aria-label="Default select example" name="tipo_prisao">
-             <option value='' {% if not request.GET.tipo_prisao %}selected{% endif %}></option>
-             <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %}selected{% endif %}>Aberta</option>
-             <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %}selected{% endif %}>Fechada</option>
-             <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %}selected{% endif %}>Semiaberta</option>
-             <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %}selected{% endif %}>Harmonizada</option>
-             <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %}selected{% endif %}>Temporária</option>
-             <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %}selected{% endif %}>Preventiva</option>
-             <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %}selected{% endif %}>Outros</option>
-         </select>
-         
-         </div>
-         
-       </div>      
-       
-       <div class="row mt-2">
-         <div class="col d-flex justify-content-start ms-1">
-          <button type="submit" class="btn btn-primary float-end">
-            <i class="bi bi-eye"></i> Visualizar
-          </button>
-          <a href="" class="btn btn-info float-start" style="margin-left: 10px;">
-            <i class="bi bi-file-earmark-text"></i> Relatório
-          </a>
-         </div>
-       </div>    
-     </div>
-   </form> 
+  <h3>Relatórios</h3>
+  <form method="post">
+    {% csrf_token %}
+    <div class="row mb-3">
+      <div class="input-group">
+        <div class="col- form-control ms-0 p-0">
+          <label class="ms-1">Nº do Prontuário</label>
+          <input class="form-control" type="text" name="n_pront" id="n_pront" value="{{ request.GET.n_pront }}">
+        </div>
+          <div class="col- form-control ms-0 p-0">
+              <label class="ms-1">Nº Ofcio</label>
+              <input class="form-control" type="text" name="n_oficio" value="{{ request.GET.n_oficio }}">
+          </div>
+          <div class="col form-control ms-0 p-0 ">
+              <label class="ps-1">Nº SEI</label>
+              <input class="form-control" type="text" name="n_sei" value="{{ request.GET.n_sei }}">
+          </div>
+          <div class="col form-control ms-0 p-0 ">
+              <label class="ps-1">Data Incial</label>
+              <input class="form-control" type="date" name="date_send1" id="" value="{{request.GET.date_send1}}" placeholder="Data Início">
+          </div>
+          <div class="col form-control ms-0 p-0 ">
+              <label class="ps-1">Data Final</label>
+              <input class="form-control" type="date" name="date_send2" id="" value="{{request.GET.date_send2}}" placeholder="Data Início">
+          </div>
+          <div class="col form-control ms-0 p-0">
+              <label class="ps-1">Tipo de Prisão</label>
+              <select class="form-select" aria-label="Default select example" name="tipo_prisao">
+                  <option value='' {% if not request.GET.tipo_prisao %}selected{% endif %}></option>
+                  <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %}selected{% endif %}>Aberta</option>
+                  <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %}selected{% endif %}>Fechada</option>
+                  <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %}selected{% endif %}>Semiaberta</option>
+                  <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %}selected{% endif %}>Harmonizada</option>
+                  <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %}selected{% endif %}>Temporária</option>
+                  <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %}selected{% endif %}>Preventiva</option>
+                  <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %}selected{% endif %}>Outros</option>
+              </select>
+          </div>
+      </div>
+      <div class="row mt-2">
+          <div class="col d-flex justify-content-start ms-1">
+              <button type="submit" 
+                  class="btn btn-primary" 
+                  hx-post="{% url 'relatorio_detail' %}" 
+                  hx-target="#modal-body-content" 
+                  hx-trigger="click"
+                  hx-include="closest form" 
+                  hx-swap="innerHTML" data-bs-toggle="modal" data-bs-target="#ModalOficioDetail3">
+                  <i class="bi bi-eye"></i> Visualizar
+              </button>
+              <a href="" class="btn btn-info float-start" style="margin-left: 10px;">
+                  <i class="bi bi-file-earmark-text"></i> Relatório
+              </a>
+          </div>
+      </div>
+    </div>
+</form>
+<div id="modal-content">
+    <!-- Os resultados serão atualizados aqui -->
+</div>
+ 
   
 
   <!-- table -->
@@ -73,7 +80,7 @@
           <h1 class="modal-title fs-5" id="exampleModalLabel">Ficha do Prisioneiro</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" id="modal-body-content">
           ....
           
         </div>
@@ -88,5 +95,6 @@
 
 <div id="modalteste"></div>
 
-{% endblock content %}
 
+
+{% endblock content %}
