@@ -5,6 +5,7 @@
 {% endblock title %}
 
 {% block content %}
+
 <div class="container-fluid mt-5 align-content-center">
   <!-- Filtros -->
   <h3>Relatórios</h3>
@@ -14,37 +15,49 @@
       <div class="input-group">
         <div class="col- form-control ms-0 p-0">
           <label class="ms-1">Nº do Prontuário</label>
-          <input class="form-control" type="text" name="n_pront" id="n_pront" value="{{ request.GET.n_pront }}">
+          <input class="form-control" type="text" name="n_pront" id="n_pront" 
+                 hx-get="{% url 'get_oficios' %}" 
+                 hx-target="#n_oficio" 
+                 hx-trigger="input changed delay:500ms"
+                 hx-include="[name=n_pront]" />
+      </div>
+      <div class="col- form-control ms-0 p-0">
+        <label class="ms-1">Nº Ofício</label>
+        <select class="form-select" name="n_oficio" id="n_oficio" multiple>
+            <option value="">Selecione os Ofícios</option>
+        </select>
+      </div>
+      <!-- <div class="col form-control ms-0 p-0">
+        <label class="ms-1">Nº Ofício</label>
+        <select class="form-select" aria-label="Default select example" name="n_oficio" id="n_oficio" multiple>
+            <option value="">Selecione os Ofícios</option>
+        </select>
+      </div> -->
+        <div class="col form-control ms-0 p-0 ">
+            <label class="ps-1">Nº SEI</label>
+            <input class="form-control" type="text" name="n_sei" value="{{ request.GET.n_sei }}">
         </div>
-          <div class="col- form-control ms-0 p-0">
-              <label class="ms-1">Nº Ofcio</label>
-              <input class="form-control" type="text" name="n_oficio" value="{{ request.GET.n_oficio }}">
-          </div>
-          <div class="col form-control ms-0 p-0 ">
-              <label class="ps-1">Nº SEI</label>
-              <input class="form-control" type="text" name="n_sei" value="{{ request.GET.n_sei }}">
-          </div>
-          <div class="col form-control ms-0 p-0 ">
-              <label class="ps-1">Data Incial</label>
-              <input class="form-control" type="date" name="date_send1" id="" value="{{request.GET.date_send1}}" placeholder="Data Início">
-          </div>
-          <div class="col form-control ms-0 p-0 ">
-              <label class="ps-1">Data Final</label>
-              <input class="form-control" type="date" name="date_send2" id="" value="{{request.GET.date_send2}}" placeholder="Data Início">
-          </div>
-          <div class="col form-control ms-0 p-0">
-              <label class="ps-1">Tipo de Prisão</label>
-              <select class="form-select" aria-label="Default select example" name="tipo_prisao">
-                  <option value='' {% if not request.GET.tipo_prisao %}selected{% endif %}></option>
-                  <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %}selected{% endif %}>Aberta</option>
-                  <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %}selected{% endif %}>Fechada</option>
-                  <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %}selected{% endif %}>Semiaberta</option>
-                  <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %}selected{% endif %}>Harmonizada</option>
-                  <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %}selected{% endif %}>Temporária</option>
-                  <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %}selected{% endif %}>Preventiva</option>
-                  <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %}selected{% endif %}>Outros</option>
-              </select>
-          </div>
+        <div class="col form-control ms-0 p-0 ">
+            <label class="ps-1">Data Incial</label>
+            <input class="form-control" type="date" name="date_send1" id="" value="{{request.GET.date_send1}}" placeholder="Data Início">
+        </div>
+        <div class="col form-control ms-0 p-0 ">
+            <label class="ps-1">Data Final</label>
+            <input class="form-control" type="date" name="date_send2" id="" value="{{request.GET.date_send2}}" placeholder="Data Início">
+        </div>
+        <div class="col form-control ms-0 p-0">
+          <label class="ps-1">Tipo de Prisão</label>
+          <select class="form-select" aria-label="Default select example" name="tipo_prisao">
+              <option value='' {% if not request.GET.tipo_prisao %}selected{% endif %}></option>
+              <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %}selected{% endif %}>Aberta</option>
+              <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %}selected{% endif %}>Fechada</option>
+              <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %}selected{% endif %}>Semiaberta</option>
+              <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %}selected{% endif %}>Harmonizada</option>
+              <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %}selected{% endif %}>Temporária</option>
+              <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %}selected{% endif %}>Preventiva</option>
+              <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %}selected{% endif %}>Outros</option>
+          </select>
+        </div>
       </div>
       <div class="row mt-2">
           <div class="col d-flex justify-content-start ms-1">
@@ -57,9 +70,20 @@
                   hx-swap="innerHTML" data-bs-toggle="modal" data-bs-target="#ModalOficioDetail3">
                   <i class="bi bi-eye"></i> Visualizar
               </button>
-              <a href="" class="btn btn-info float-start" style="margin-left: 10px;">
+              
+              <!-- <a href="{% url 'gerar_pdf' %}" class="btn btn-info float-start" style="margin-left: 10px;">
                   <i class="bi bi-file-earmark-text"></i> Relatório
+              </a> -->
+              <a 
+                  class="btn btn-primary" 
+                  hx-get="{% url 'gerar_pdf' %}" 
+                  hx-target="#modal-content" 
+                  hx-trigger="click"
+                  hx-include="closest form" 
+                  >
+                  <i class="bi bi-eye"></i> gerar
               </a>
+              
           </div>
       </div>
     </div>
@@ -94,7 +118,47 @@
 </div>
 
 <div id="modalteste"></div>
-
-
-
+<style>
+   
+  /* Cor de fundo das opções */
+  .select2-container--default .select2-results__option {
+      background-color: #212529;
+      color: #cccccc;
+  }
+  
+  .select2-container--default .select2-selection--multiple {
+      background-color: #212529;
+      color: #cccccc;
+      border: 1px solid #405057;
+      
+  }
+  .select2-container--default .select2-selection__choice__display {
+      
+      color: #212529;
+  }
+</style>
+<script>
+  $(document).ready(function() {
+      $('#n_oficio').select2({
+          placeholder: "Selecione os Ofícios", // Placeholder do campo
+          allowClear: true, // Permite limpar a seleção
+          width: '100%' // Ajusta a largura para se integrar ao Bootstrap
+      });
+  });
+</script>
+<script>
+  document.body.addEventListener("htmx:afterSwap", (event) => {
+    if (event.detail.target.id === "n_oficio") {
+        // Destroi a instância existente do Select2 (se houver)
+        $('#n_oficio').select2('destroy');
+        
+        // Inicializa novamente o Select2
+        $('#n_oficio').select2({
+            placeholder: "Selecione os Ofícios",
+            allowClear: true,
+            width: '100%'
+        });
+    }
+  });
+</script>
 {% endblock content %}
