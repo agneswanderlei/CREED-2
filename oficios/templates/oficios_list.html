@@ -144,6 +144,13 @@
         <form id="gerarRelatorioForm" action="{% url 'gerar_relatorio_pdf' %}" method="get">
           <div class="input-group">
             <input type="text" class="form-control" name="dest" value="{{ request.GET.dest }}" placeholder="Digite o código" maxlength="10"> 
+            <input type="hidden" value="{{ request.GET.tipo_prisao }}" name="tipo_prisao">
+            <input class="form-control" type="hidden" name="n_pront" value="{{ request.GET.n_pront }}">          
+            <input class="form-control" type="hidden" name="n_oficio" value="{{ request.GET.n_oficio }}">          
+            <input class="form-control" type="hidden" name="n_sei" value="{{ request.GET.n_sei }}">
+            <input class="form-control" type="hidden" name="date_send1" id="" value="{{request.GET.date_send1}}" placeholder="Data Início">
+            <input class="form-control" type="hidden" name="date_send2" id="" value="{{request.GET.date_send2}}" placeholder="Data Início">
+            
             <button class="btn btn-danger" type="submit" data-bs-dismiss="modal"><i class="bi bi-send-arrow-down"></i> Enviar</button>
           </div>
         </form>

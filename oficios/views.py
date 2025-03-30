@@ -158,7 +158,13 @@ def gerar_relatorio_pdf(request):
     # Obtém o nome do usuário logado
     nome_usuario = request.user.codigo_usuario or "Usuário"
     destinatario = request.GET.get('dest')
-    print(f'Destinatario: {destinatario}')
+    tipo_prisao = request.GET.get('tipo_prisao')
+    n_pront = request.GET.get('n_pront')
+    n_oficio = request.GET.get('n_oficio')
+    n_sei = request.GET.get('n_sei')
+    date_send1 = request.GET.get('date_send1')
+    date_send2 = request.GET.get('date_send2')
+    print(f'Destinatario: {tipo_prisao}')
 
     # Criar o documento
     doc = BaseDocTemplate(
@@ -180,17 +186,34 @@ def gerar_relatorio_pdf(request):
 
     # Dados para a tabela
     oficios = models.Oficios.objects.all()
-    data = [["Nº Ofício", "Nº SEI", "Data", "Tipo de Prisão"]]
+    if tipo_prisao:
+        oficios = oficios.filter(tipo_prisao__exact=tipo_prisao)
+    if n_oficio:
+        oficios = oficios.filter(n_oficios__icontains=n_oficio)
+    if n_pront:
+        oficios = oficios.filter(n_pront_presos__number_doc__exact=n_pront)
+    if n_sei:
+        oficios = oficios.filter(n_sei__icontains=n_sei)
+    if date_send1 and date_send2:
+        oficios = oficios.filter(date_send__range=[date_send1, date_send2]) # Filtra intervalos
+    if date_send1:
+        oficios = oficios.filter(date_send__gte=date_send1)
+    if date_send2:
+        oficios = oficios.filter(date_send__lte=date_send2)    
+
+
+    data = [["Nº Ofício", "Nº SEI", "Data", "Tipo de Prisão", 'Descrição']]
     for oficio in oficios:
         data.append([
             oficio.n_oficios,
             oficio.n_sei,
             oficio.date_send.strftime("%d/%m/%Y"),
-            oficio.tipo_prisao
+            oficio.tipo_prisao,
+            oficio.descricao
         ])
 
     # Criação da tabela
-    table = Table(data, colWidths=[100, 100, 100, 200])
+    table = Table(data, colWidths=[75, 50, 75, 100, 300],)
 
     # Estilo da tabela
     style = TableStyle([

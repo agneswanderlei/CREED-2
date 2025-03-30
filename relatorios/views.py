@@ -7,6 +7,8 @@ from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from datetime import datetime
+from reportlab.pdfbase.pdfmetrics import stringWidth
+
 
 
 def relatoriohome(request):
@@ -93,6 +95,7 @@ def get_oficios(request):
 
 def gerar_pdf(request):
     if request.method == 'GET':
+        # Obtém os dados:
         n_pront = request.GET.get('n_pront')
         print(f'teste {n_pront}')
         
@@ -106,13 +109,31 @@ def gerar_pdf(request):
         # Define o tamanho da página
         largura, altura = letter
         data = datetime.now().strftime("%d/%m/%Y")
-        # Obtém o número do prontuário do formulário
+        hora = datetime.now().strftime("%H:%M:%S")  # Formata a hora (horas:minutos:segundos)
+
         # n_pront = request.GET.get('n_pront')
         print(n_pront)
 
         # Busca o preso no banco de dados
         preso = Presos.objects.filter(number_doc=n_pront).first()
+        prontuario = preso.number_doc if preso else None
         nome_preso = preso.name_full if preso else "Preso não encontrado"
+        tipo_pront = preso.type_doc if preso else None
+        funcao = preso.posto_grad if preso else None
+        instituicao = preso.institutions if preso else None
+        estado = preso.state_origin if preso else None
+        setor = preso.sector if preso else None
+        foto = preso.photo.path if preso and preso.photo else None
+        
+        # Adiciona a Imagem se existir
+        if foto:
+            try:
+                c.drawImage(foto, 35, altura - 245, 125, 125)
+            except Exception as e:
+                c.drawString(30,altura - 125, f'Erro ao carregar a imagem {e}')
+        else:
+            c.drawString(30,altura - 125, 'Preso não possui foto.')
+
 
 
         # Adiciona um título no topo do PDF
@@ -121,16 +142,47 @@ def gerar_pdf(request):
         c.setFont("Helvetica", 10)
         c.drawString(30, altura - 50, "Gerado por: Sistema de Gestão Prisional")
         c.drawString(30, altura - 65, f"Data: {data}")  # Pode ser dinâmico
+        c.drawString(30, altura - 75, f"Hora: {hora}")  # Pode ser dinâmico
 
 
         # Adiciona texto no PDF
         c.setFont("Helvetica-Bold", 12)
-        c.drawString(30, altura - 100, "Ficha do prisioneiro")
+        c.drawString(30, altura - 105, "Ficha do prisioneiro")
 
         # Adiciona uma linha horizontal
-        c.line(30, altura - 110, largura - 30, altura - 110)
-        c.drawString(30, altura - 120, f"Nome do preso: {nome_preso}")  # Pode ser dinâmico
+        c.setStrokeColorRGB(0.5,0.5,0.5)
+        # c.setFillColorRGB(0.5,0.5,0.5) #Define a cor do fundo
+        c.roundRect(30,altura-250,550,140,3,) #Desenha o retangulo
+
+        c.setFont("Helvetica", 12)
+        # c.line(30, altura - 110, largura - 30, altura - 110)
+
+
+        c.drawString(165, altura - 130, f"Prontuário:")  # Pode ser dinâmico
+        c.drawString(165, altura - 150, f"Tipo de Prontuário:")  # Pode ser dinâmico
+        c.drawString(165, altura - 170, f"Nome:")  # Pode ser dinâmico
+        c.drawString(165, altura - 190, f"Função:")  # Pode ser dinâmico
+        c.drawString(165, altura - 210, f"Setor:")  # Pode ser dinâmico
+        c.drawString(165, altura - 230, f"Instituição:")  # Pode ser dinâmico
+        c.drawString(int(stringWidth(f'Instituição: {instituicao}','Helvetica', 12)) + 175, altura - 230, f"Estado:")  # Pode ser dinâmico
+        print(int(stringWidth('Prontuário','Helvetica', 12)))
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(int(stringWidth('Prontuário:','Helvetica', 12)) + 170, altura - 130, prontuario)  # Pode ser dinâmico
+        c.drawString(int(stringWidth('Tipo de Prontuário:','Helvetica', 12)) + 170, altura - 150, f'{tipo_pront}')  # Pode ser dinâmico
+        c.drawString(int(stringWidth('Nome:','Helvetica', 12)) + 170, altura - 170, nome_preso)  # Pode ser dinâmico
+        c.drawString(int(stringWidth('Função:','Helvetica', 12)) + 170, altura - 190, f'{funcao}')  # Pode ser dinâmico
+        c.drawString(int(stringWidth('Setor:','Helvetica', 12)) + 170, altura - 210, f'{setor}')  # Pode ser dinâmico
+        c.drawString(int(stringWidth('Instituição:','Helvetica', 12)) + 170, altura - 230, f'{instituicao}')  # Pode ser dinâmico
+        c.drawString(int(stringWidth('Estado:','Helvetica', 12)) + int(stringWidth(f'Instituição: {instituicao}','Helvetica', 12)) + 180, altura - 230, f'{estado}')  # Pode ser dinâmico
+
+        # CONFIG NOME HISTÓRICO
+        c.setStrokeColorRGB(0.5,0.5,0.5)
+        c.setFillColorRGB(0.5,0.5,0.5) #Define a cor do fundo
+        c.roundRect(30,altura-275,550,20,10,fill=True) #Desenha o retangulo
+        c.setFillColorRGB(1,1,1) # Define a cor do texto
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString((largura - int(stringWidth('HISTÓRICO:','Helvetica', 12))) / 2, altura - 270, "HISTÓRICO")
         # Finaliza o PDF
         c.save()
 
-    return response
+        return response
