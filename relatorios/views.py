@@ -11,9 +11,11 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 from datetime import datetime
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, PageTemplate, Frame
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import Image, Spacer, HRFlowable
+from reportlab.lib.enums import TA_JUSTIFY
+
 import os
 
 
@@ -313,9 +315,27 @@ def desenhar_marca_dagua(c, largura, altura, nome_usuario):
 
 def header_footer(canvas, doc):
     largura, altura = letter  # Garante que as dimensões da página sejam corretas
+    data = datetime.now().strftime("%d/%m/%Y")
+    hora = datetime.now().strftime("%H:%M:%S")
     nome_usuario = doc.nome_usuario  # Passando dinamicamente
-
     desenhar_marca_dagua(canvas, largura, altura, nome_usuario)
+    # Cabeçalho com "RESERVADO"
+    canvas.saveState()
+    canvas.setFont("Helvetica-Bold", 14)  # Fonte do texto
+    canvas.setFillColorRGB(1, 0, 0)  # Cor vermelha (RGB)
+    canvas.drawCentredString(largura / 2.0, altura - 40, "RESERVADO")  # Posição no cabeçalho
+
+    # Nome do dia em que foi criado
+    canvas.setFont("Helvetica", 10)  # Fonte do texto
+    canvas.setFillColorRGB(0, 0, 0)  # Cor preta (RGB)
+    canvas.drawString(40, altura - 50, f"Data: {data} - Hora: {hora}")  # Posição no cabeçalho
+    
+    # Rodapé com "RESERVADO"
+    canvas.setFont("Helvetica-Bold", 14)  # Fonte do texto
+    canvas.setFillColorRGB(1, 0, 0)  # Cor vermelha (RGB)
+    canvas.drawCentredString(largura / 2.0, 30, "RESERVADO")  # Posição no rodapé
+    
+
 
 def gerar_pdf(request):
     if request.method == 'GET':
@@ -324,28 +344,63 @@ def gerar_pdf(request):
         response['Content-Disposition'] = 'attachment; filename="relatorio_prisioneiro.pdf"'
         
         largura, altura = letter
-        data = datetime.now().strftime("%d/%m/%Y")
-        hora = datetime.now().strftime("%H:%M:%S")
-        
         preso = Presos.objects.filter(number_doc=n_pront).first()
         nome_usuario = request.user.codigo_usuario or "Usuário"
         
-        doc = SimpleDocTemplate(response, pagesize=letter)
+        doc = SimpleDocTemplate(
+            response,
+            pagesize=letter,
+            leftMargin=inch / 2,
+            rightMargin=inch / 2,
+            topMargin=inch,
+            bottomMargin=inch,
+        )
         doc.nome_usuario = nome_usuario  # Adiciona nome_usuario ao documento
         elements = []
         styles = getSampleStyleSheet()
 
         # Define um frame para a página
-        frame = Frame(inch, inch, largura - 2 * inch, altura - 2 * inch, id='normal')
+        frame = Frame(
+            inch / 2, # Diminui margem esquerda
+            inch, # Margem inferior
+            largura - inch, # margem direita
+            altura - 2 * inch, # margem superior
+            id='normal'
+        )
+
 
         # Aplica o template para todas as páginas
         template = PageTemplate(id='marca_dagua', frames=frame, onPage=header_footer)
         doc.addPageTemplates([template])
 
+        styles.add(ParagraphStyle(name='Titulo_rel', parent=styles['Title'], fontSize=24))
+        styles.add(ParagraphStyle(
+            name='Justifield',
+            parent=styles['Normal'],
+            alignment=TA_JUSTIFY,
+            wordWrap='CJK',
+            fontSize=12,
+            leading=18
+            )
+        )
+        styles.add(ParagraphStyle(
+            name='texto_desc_oficios',
+            parent=styles['Normal'],
+            alignment=TA_JUSTIFY,
+            wordWrap='CJK',
+            fontSize=12,
+            leading=14
+            )
+        )
+        centered_style2 = ParagraphStyle(
+            name='Centered',
+            parent=styles["Heading2"],
+            alignment=1, # Alinhamento central (0-esq, 1-center, 2-dir)
+            textColor="black"
+        )
         # Conteúdo do PDF
-        elements.append(Paragraph("<b>RELATÓRIO DE PRISIONEIROS</b>", styles["Title"]))
-        elements.append(Paragraph(f"<b>Gerado por: Sistema de Gestão Prisional</b>", styles["Normal"]))
-        elements.append(Paragraph(f"Data: {data} - Hora: {hora}", styles["Normal"]))
+        elements.append(Paragraph("<b>RELATÓRIO DE PRISIONEIROS</b>", styles["Titulo_rel"]))
+        elements.append(Paragraph(f"<b>Gerado por: Sistema de Gestão Prisional</b>", centered_style2))
         
         if preso.photo:  
             caminho_foto = preso.photo.path  
@@ -370,25 +425,49 @@ def gerar_pdf(request):
             ["Estado:", preso.state_origin]
         ]
         
-        tabela_preso = Table(dados_preso, colWidths=[150, 300])
+        tabela_preso = Table(dados_preso, colWidths=[150, 380])
         tabela_preso.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
+            ('FONTSIZE', (0, 0), (0, -1), 12),
+            ('FONTSIZE', (0, 0), (1, -1), 12),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
             ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            
         ]))
-        
         elements.append(tabela_preso)
-        elements.append(Paragraph("<b>HISTÓRICO:</b>", styles["Heading2"]))
-
+        # Stilo para centralizar
+        centered_style = ParagraphStyle(
+            name='Centered',
+            parent=styles["Heading2"],
+            alignment=1, # Alinhamento central (0-esq, 1-center, 2-dir)
+            textColor="White"
+        )
+        
+        # elements.append(Paragraph("<b>HISTÓRICO:</b>", centered_style))
+        elements.append(Spacer(1,10))
+        paragrafo = Paragraph("<b>HISTÓRICO:</b>", centered_style)
+        tabela2 = Table([[paragrafo]], colWidths=[530], rowHeights=[20])
+        tabela2.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.grey),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE')
+        ]))
+        elements.append(tabela2)
+        elements.append(Spacer(1,10))
         if preso.oficioss.exists():
             for oficio in preso.oficioss.all():
-                descricao_linhas = simpleSplit(oficio.descricao, "Helvetica", 10, 500)
-                elements.append(Paragraph(f"<b>Ofício Nº</b>: {oficio.n_oficios} - <b>Nº SEI:</b> {oficio.n_sei} - <b>Tipo de Prisão:</b> {oficio.tipo_prisao}", styles["Normal"]))
-                for linha in descricao_linhas:
-                    elements.append(Paragraph(linha, styles["Normal"]))
+                # descricao_linhas = simpleSplit(oficio.descricao, "Helvetica", 10, 500)
+                elements.append(Paragraph(f"<b>Data do ofício:</b> {oficio.date_send.strftime("%d/%m/%Y")} - <b>Ofício Nº</b>: {oficio.n_oficios} - <b>Nº SEI:</b> {oficio.n_sei} - <b>Tipo de Prisão:</b> {oficio.tipo_prisao}", styles["texto_desc_oficios"]))
+                elements.append(Spacer(1, 10))
+                elements.append(Paragraph(oficio.descricao, styles['Justifield']))
+                # for linha in descricao_linhas:
+                #     elements.append(Paragraph(linha, styles["Justifield"]))
                 elements.append(Spacer(1, 10))
                 elements.append(HRFlowable(width="100%", thickness=0.5, color="black"))
                 elements.append(Spacer(1, 10))
