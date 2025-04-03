@@ -27,37 +27,31 @@
             <option value="">Selecione os Ofícios</option>
         </select>
       </div>
-      <!-- <div class="col form-control ms-0 p-0">
-        <label class="ms-1">Nº Ofício</label>
-        <select class="form-select" aria-label="Default select example" name="n_oficio" id="n_oficio" multiple>
-            <option value="">Selecione os Ofícios</option>
+      <div class="col form-control ms-0 p-0 ">
+          <label class="ps-1">Nº SEI</label>
+          <input class="form-control" type="text" name="n_sei" value="{{ request.GET.n_sei }}">
+      </div>
+      <div class="col form-control ms-0 p-0 ">
+          <label class="ps-1">Data Incial</label>
+          <input class="form-control" type="date" name="date_send1" id="" value="{{request.GET.date_send1}}" placeholder="Data Início">
+      </div>
+      <div class="col form-control ms-0 p-0 ">
+          <label class="ps-1">Data Final</label>
+          <input class="form-control" type="date" name="date_send2" id="" value="{{request.GET.date_send2}}" placeholder="Data Início">
+      </div>
+      <div class="col form-control ms-0 p-0">
+        <label class="ps-1">Tipo de Prisão</label>
+        <select class="form-select" aria-label="Default select example" name="tipo_prisao">
+            <option value='' {% if not request.GET.tipo_prisao %}selected{% endif %}></option>
+            <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %}selected{% endif %}>Aberta</option>
+            <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %}selected{% endif %}>Fechada</option>
+            <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %}selected{% endif %}>Semiaberta</option>
+            <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %}selected{% endif %}>Harmonizada</option>
+            <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %}selected{% endif %}>Temporária</option>
+            <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %}selected{% endif %}>Preventiva</option>
+            <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %}selected{% endif %}>Outros</option>
         </select>
-      </div> -->
-        <div class="col form-control ms-0 p-0 ">
-            <label class="ps-1">Nº SEI</label>
-            <input class="form-control" type="text" name="n_sei" value="{{ request.GET.n_sei }}">
-        </div>
-        <div class="col form-control ms-0 p-0 ">
-            <label class="ps-1">Data Incial</label>
-            <input class="form-control" type="date" name="date_send1" id="" value="{{request.GET.date_send1}}" placeholder="Data Início">
-        </div>
-        <div class="col form-control ms-0 p-0 ">
-            <label class="ps-1">Data Final</label>
-            <input class="form-control" type="date" name="date_send2" id="" value="{{request.GET.date_send2}}" placeholder="Data Início">
-        </div>
-        <div class="col form-control ms-0 p-0">
-          <label class="ps-1">Tipo de Prisão</label>
-          <select class="form-select" aria-label="Default select example" name="tipo_prisao">
-              <option value='' {% if not request.GET.tipo_prisao %}selected{% endif %}></option>
-              <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %}selected{% endif %}>Aberta</option>
-              <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %}selected{% endif %}>Fechada</option>
-              <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %}selected{% endif %}>Semiaberta</option>
-              <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %}selected{% endif %}>Harmonizada</option>
-              <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %}selected{% endif %}>Temporária</option>
-              <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %}selected{% endif %}>Preventiva</option>
-              <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %}selected{% endif %}>Outros</option>
-          </select>
-        </div>
+      </div>
       </div>
       <div class="row mt-2">
           <div class="col d-flex justify-content-start ms-1">
@@ -71,9 +65,17 @@
                   <i class="bi bi-eye"></i> Visualizar
               </button>
               
-              <a href="{% url 'gerar_pdf' %}" class="btn btn-info float-start" style="margin-left: 10px;">
-                  <i class="bi bi-file-earmark-text"></i> Relatório
-              </a>
+              <button type="submit"
+              class="btn btn-info float-start"
+              style="margin-left: 10px;"
+              hx-post="{% url 'get_dados' %}"
+              hx-target="#modal-body-content"
+              hx-trigger="click"
+              hx-include="closest form" hx-swap="innerHTML"
+              data-bs-toggle="modal"
+              data-bs-target="#Modaldestinatario">
+                  <i class="bi bi-file-earmark-text"></i> Relatóriox
+              </button>
               <button 
                   class="btn btn-primary" 
                   type="submit" 
@@ -114,6 +116,26 @@
   </div>
 </div>
 
+<!-- Modal Destinatario-->
+<div class="modal fade mt-5 modal-xl" id="Modaldestinatario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div id="detailcontent" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Ficha do Prisioneiro</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal-body-content">
+        ....
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 <div id="modalteste"></div>
 <style>
    

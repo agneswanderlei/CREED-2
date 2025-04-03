@@ -1,4 +1,14 @@
-<option value="">Selecione os Ofícios</option>
-{% for oficio in oficios %}
-    <option value="{{ oficio.id }}">{{ oficio.n_oficios }}</option>
-{% endfor %}
+<form id="gerarRelatorioForm" action="{% url 'gerar_pdf' %}" method="get">
+    <div class="input-group">
+        <input type="text" class="form-control" name="dest" value="{{ request.GET.dest }}" placeholder="Digite o código." maxlength="10"> 
+        <input type="text" class="form-control" name="senha" value="{{ request.GET.senha }}" placeholder="Digite a senha."> 
+        <input type="hidden" value="{{ tipo_prisao }}" name="tipo_prisao">
+        <input class="form-control" type="hidden" name="n_pront2" value="{{ presos }}">
+        <input class="form-control" type="hidden" name="n_oficio2" value="{{ n_oficios }}">          
+        <input class="form-control" type="hidden" name="n_sei" value="{{ n_sei }}">
+        <input class="form-control" type="hidden" name="date_send1" id="" value="{{date_send1}}" placeholder="Data Início">
+        <input class="form-control" type="hidden" name="date_send2" id="" value="{{date_send2}}" placeholder="Data Fm">
+      
+      <button class="btn btn-danger" type="submit" data-bs-dismiss="modal"><i class="bi bi-send-arrow-down"></i> Enviar</button>
+    </div>
+  </form>

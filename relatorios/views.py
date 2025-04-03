@@ -80,12 +80,34 @@ def get_oficios(request):
     return render(request, "partials/oficios_options.html", {"oficios": []})
 
 
-def desenhar_marca_dagua(c, largura, altura, nome_usuario):
+def get_dados(request):
+    if request.method == 'POST':
+        n_pront = request.POST.get("n_pront")
+        n_oficio = request.POST.getlist("n_oficio")
+        n_sei = request.POST.get("n_sei")
+        date_send1 = request.POST.get("date_send1")
+        date_send2 = request.POST.get("date_send2")
+        tipo_prisao = request.POST.get("tipo_prisao")
+        print(n_oficio)
+        preso = Presos.objects.filter(number_doc__exact=n_pront).first() if n_pront else None
+        
+        return render(request, "partials/modal_destinario.html", {
+            'presos': n_pront,
+            'n_oficios': n_oficio,
+            'n_sei': n_sei,
+            'date_send1': date_send1,
+            'date_send2': date_send2,
+            'tipo_prisao': tipo_prisao,
+
+        })
+    return render(request, "partials/modal_destinario.html", {"oficios": []})
+
+def desenhar_marca_dagua(c, largura, altura, nome_usuario, destinatario):
     c.setFont("Helvetica-Bold", 16)
     c.setFillColorRGB(0.85, 0.85, 0.85)
     c.saveState()
     c.rotate(45)
-    texto_marca_dagua = f"AC49 {nome_usuario} "
+    texto_marca_dagua = f"AC49 {nome_usuario} {destinatario} "
     largura_texto = stringWidth(texto_marca_dagua, "Helvetica-Bold", 16)
     espacamento_x = int(largura_texto) + 20
     espacamento_y = 40
@@ -100,7 +122,8 @@ def header_footer(canvas, doc):
     data = datetime.now().strftime("%d/%m/%Y")
     hora = datetime.now().strftime("%H:%M:%S")
     nome_usuario = doc.nome_usuario  # Passando dinamicamente
-    desenhar_marca_dagua(canvas, largura, altura, nome_usuario)
+    destinatario = doc.destinatario
+    desenhar_marca_dagua(canvas, largura, altura, nome_usuario, destinatario)
     # Cabeçalho com "RESERVADO"
     canvas.saveState()
     canvas.setFont("Helvetica-Bold", 14)  # Fonte do texto
@@ -121,7 +144,10 @@ def header_footer(canvas, doc):
 
 def gerar_pdf(request):
     if request.method == 'GET':
-        n_pront = request.GET.get('n_pront')
+        n_pront = request.GET.get('n_pront2')
+        senha = request.GET.get('senha')
+        dest = request.GET.get('dest')
+        print(f'teste: {senha}')
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="relatorio_prisioneiro.pdf"'
 
@@ -141,6 +167,7 @@ def gerar_pdf(request):
             bottomMargin=inch,
         )
         doc.nome_usuario = nome_usuario  # Adiciona nome_usuario ao documento
+        doc.destinatario = dest
         elements = []
         styles = getSampleStyleSheet()
 
@@ -271,8 +298,8 @@ def gerar_pdf(request):
             pdf_writer.add_page(page)
 
         # Adicionar senha
-        senha = "123"
-        pdf_writer.encrypt(senha)
+        senhas = senha
+        pdf_writer.encrypt(senhas)
 
         # Salvar PDF final protegido no response
         output = BytesIO()
