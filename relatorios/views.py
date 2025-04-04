@@ -17,7 +17,6 @@ from reportlab.lib.enums import TA_JUSTIFY
 import os
 from io import BytesIO
 from PyPDF2 import PdfWriter, PdfReader
-import ast # serve para transformar em lista uma str
 
 
 def relatoriohome(request):
