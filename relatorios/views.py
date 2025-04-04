@@ -17,6 +17,7 @@ from reportlab.lib.enums import TA_JUSTIFY
 import os
 from io import BytesIO
 from PyPDF2 import PdfWriter, PdfReader
+import ast # serve para transformar em lista uma str
 
 
 def relatoriohome(request):
@@ -88,8 +89,15 @@ def get_dados(request):
         date_send1 = request.POST.get("date_send1")
         date_send2 = request.POST.get("date_send2")
         tipo_prisao = request.POST.get("tipo_prisao")
-        print(n_oficio)
-        preso = Presos.objects.filter(number_doc__exact=n_pront).first() if n_pront else None
+        # salvar na sessio do django para usar esses dados depois
+        request.session['dados'] = {
+            'n_pront': n_pront,
+            'n_oficio': n_oficio,
+            'n_sei': n_sei,
+            'date_send1': date_send1,
+            'date_send2': date_send2,
+            'tipo_prisao': tipo_prisao
+        }
         
         return render(request, "partials/modal_destinario.html", {
             'presos': n_pront,
@@ -144,12 +152,30 @@ def header_footer(canvas, doc):
 
 def gerar_pdf(request):
     if request.method == 'GET':
+        # recuperar dados da session
+        dados = request.session.get('dados', {})
+        n_pront22 = dados.get('n_pront')
+        n_oficio22 = dados.get('n_oficio')
         n_pront = request.GET.get('n_pront2')
         senha = request.GET.get('senha')
         dest = request.GET.get('dest')
-        print(f'teste: {senha}')
+        tipo_prisao = request.GET.get('tipo_prisao')
+        n_sei = request.GET.get('n_sei')
+        date_send1 = request.GET.get('date_send1')
+        date_send2 = request.GET.get('date_send2')
+        n_oficio = request.GET.get('n_oficio2')
+        preso = Presos.objects.filter(number_doc=n_pront).first()
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="relatorio_prisioneiro.pdf"'
+        response['Content-Disposition'] = f'attachment; filename="RELATORIO PRESO - {preso.name_full.upper()} - {dest}.pdf"'
+        print(type(n_oficio22))
+        print(n_oficio22)
+
+        # pedando os dados do oficio
+        if n_pront:
+            oficios = Oficios.objects.filter(n_pront_presos__number_doc__exact=n_pront)
+        if n_oficio22:
+            oficios = Oficios.objects.filter(id__in=n_oficio22)
+            print(oficios)
 
         # Use BytesIO para gerar o PDF em memória
         buffer = BytesIO()

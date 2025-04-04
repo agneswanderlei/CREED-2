@@ -58,10 +58,10 @@
               <button type="submit" 
                   class="btn btn-primary" 
                   hx-post="{% url 'relatorio_detail' %}" 
-                  hx-target="#modal-body-content" 
+                  hx-target="#modal-body-content2" 
                   hx-trigger="click"
                   hx-include="closest form" 
-                  hx-swap="innerHTML" data-bs-toggle="modal" data-bs-target="#ModalOficioDetail3">
+                  hx-swap="innerHTML" data-bs-toggle="modal" data-bs-target="#modalrelatoriodetail">
                   <i class="bi bi-eye"></i> Visualizar
               </button>
               
@@ -69,7 +69,7 @@
               class="btn btn-info float-start"
               style="margin-left: 10px;"
               hx-post="{% url 'get_dados' %}"
-              hx-target="#modal-body-content"
+              hx-target="#modal-body-content3"
               hx-trigger="click"
               hx-include="closest form" hx-swap="innerHTML"
               data-bs-toggle="modal"
@@ -96,41 +96,39 @@
   <!-- table -->
   
   <!-- Modal Detail-->
-  <div class="modal fade mt-5 modal-xl" id="ModalOficioDetail3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div id="detailcontent" class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Ficha do Prisioneiro</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="modal-body-content">
-          ....
-          
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Destinatario-->
-<div class="modal fade mt-5 modal-xl" id="Modaldestinatario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade mt-5 modal-xl" id="modalrelatoriodetail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div id="detailcontent" class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">Ficha do Prisioneiro</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="modal-body-content">
+      <div class="modal-body" id="modal-body-content2">
         ....
         
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Destinatario-->
+<div class="modal fade mt-5 modal-md" id="Modaldestinatario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div id="detailcontent" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Gerar Relatório</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal-body-content3">
+        ....
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
