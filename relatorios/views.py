@@ -153,28 +153,39 @@ def gerar_pdf(request):
     if request.method == 'GET':
         # recuperar dados da session
         dados = request.session.get('dados', {})
-        n_pront22 = dados.get('n_pront')
-        n_oficio22 = dados.get('n_oficio')
-        n_pront = request.GET.get('n_pront2')
+        n_pront = dados.get('n_pront')
+        n_oficio = dados.get('n_oficio')
+        tipo_prisao = dados.get('tipo_prisao')
+        n_sei = dados.get('n_sei')
+        date_send1 = dados.get('date_send1')
+        date_send2 = dados.get('date_send2')
+
+        # pegar dados pelo GET
         senha = request.GET.get('senha')
         dest = request.GET.get('dest')
-        tipo_prisao = request.GET.get('tipo_prisao')
-        n_sei = request.GET.get('n_sei')
-        date_send1 = request.GET.get('date_send1')
-        date_send2 = request.GET.get('date_send2')
-        n_oficio = request.GET.get('n_oficio2')
         preso = Presos.objects.filter(number_doc=n_pront).first()
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="RELATORIO PRESO - {preso.name_full.upper()} - {dest}.pdf"'
-        print(type(n_oficio22))
-        print(n_oficio22)
+        if dest:
+            response['Content-Disposition'] = f'attachment; filename="RELATORIO PRESO - {preso.name_full.upper()} - {dest}.pdf"'
+        response['Content-Disposition'] = f'attachment; filename="RELATORIO PRESO - {preso.name_full.upper()}.pdf"'
 
         # pedando os dados do oficio
+        oficios = Oficios.objects.all()
         if n_pront:
-            oficios = Oficios.objects.filter(n_pront_presos__number_doc__exact=n_pront)
-        if n_oficio22:
-            oficios = Oficios.objects.filter(id__in=n_oficio22)
+            oficios = oficios.filter(n_pront_presos__number_doc__exact=n_pront)
+        if n_oficio:
+            oficios = oficios.filter(id__in=n_oficio)
             print(oficios)
+        if n_sei:
+            oficios = oficios.filter(n_sei__icontains=n_sei)  # Busca parcial pelo Nº SEI
+        if date_send1 and date_send2:
+            oficios = oficios.filter(date_send__range=[date_send1, date_send2])
+        if date_send1:
+            oficios = oficios.filter(date_send__gte=date_send1)
+        if date_send2:
+            oficios = oficios.filter(date_send__lte=date_send2)
+        if tipo_prisao:
+            oficios = oficios.filter(tipo_prisao__exact=tipo_prisao)
 
         # Use BytesIO para gerar o PDF em memória
         buffer = BytesIO()
@@ -298,7 +309,7 @@ def gerar_pdf(request):
         elements.append(tabela2)
         elements.append(Spacer(1,10))
         if preso.oficioss.exists():
-            for oficio in preso.oficioss.all():
+            for oficio in oficios:
                 # descricao_linhas = simpleSplit(oficio.descricao, "Helvetica", 10, 500)
                 elements.append(Paragraph(f"<b>Data do ofício:</b> {oficio.date_send.strftime("%d/%m/%Y")} - <b>Ofício Nº</b>: {oficio.n_oficios} - <b>Nº SEI:</b> {oficio.n_sei} - <b>Tipo de Prisão:</b> {oficio.tipo_prisao}", styles["texto_desc_oficios"]))
                 elements.append(Spacer(1, 10))

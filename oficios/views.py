@@ -19,9 +19,13 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.platypus import PageTemplate, BaseDocTemplate, Frame, Table, TableStyle, Paragraph
 
 from django.http import HttpResponse
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase.pdfmetrics import stringWidth
-
+from reportlab.lib.units import inch
+import os
+from io import BytesIO
+from PyPDF2 import PdfWriter, PdfReader
+from reportlab.lib.enums import TA_JUSTIFY
 
 
 
@@ -157,6 +161,7 @@ def gerar_relatorio_pdf(request):
 
     # Obtém o nome do usuário logado
     nome_usuario = request.user.codigo_usuario or "Usuário"
+    senha = request.GET.get('senha')
     destinatario = request.GET.get('dest')
     tipo_prisao = request.GET.get('tipo_prisao')
     n_pront = request.GET.get('n_pront')
@@ -166,11 +171,18 @@ def gerar_relatorio_pdf(request):
     date_send2 = request.GET.get('date_send2')
     print(f'Destinatario: {tipo_prisao}')
 
+    # Use BytesIO para gerar o PDF em memória
+    buffer = BytesIO()
+
     # Criar o documento
-    doc = BaseDocTemplate(
-        response,
-        pagesize=letter,
-    )
+    doc = SimpleDocTemplate(
+            buffer,
+            pagesize=letter,
+            leftMargin=inch / 2,
+            rightMargin=inch / 2,
+            topMargin=inch,
+            bottomMargin=inch,
+        )
 
     # Tamanho da página
     largura, altura = letter
@@ -201,21 +213,32 @@ def gerar_relatorio_pdf(request):
     if date_send2:
         oficios = oficios.filter(date_send__lte=date_send2)    
 
-
     data = [["Nº Ofício", "Nº SEI", "Data", "Tipo de Prisão", 'Descrição']]
+
+    styles.add(ParagraphStyle(
+            name='Justifield',
+            parent=styles['Normal'],
+            alignment=TA_JUSTIFY,
+            wordWrap='CJK',
+            fontSize=12,
+            leading=18
+            )
+        )
+    
     for oficio in oficios:
         data.append([
             oficio.n_oficios,
             oficio.n_sei,
             oficio.date_send.strftime("%d/%m/%Y"),
             oficio.tipo_prisao,
-            oficio.descricao
+            Paragraph(oficio.descricao, styles['Justifield'])
         ])
 
     # Criação da tabela
     table = Table(data, colWidths=[75, 50, 75, 100, 300],)
 
     # Estilo da tabela
+
     style = TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -223,16 +246,10 @@ def gerar_relatorio_pdf(request):
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, -1), 12),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
     ])
     table.setStyle(style)
-
-    # Alternar cores nas linhas (efeito zebra)
-    for i in range(1, len(data)):
-        bc_color = colors.lightgrey if i % 2 == 0 else colors.white
-        table.setStyle(TableStyle([('BACKGROUND', (0, i), (-1, i), bc_color)]))
-
+    
     # Altura estimada da tabela
     table_width = sum([100, 100, 100, 200])  # Soma das larguras das colunas
     central_x = (largura - table_width) / 2  # Calcula posição central
@@ -252,6 +269,30 @@ def gerar_relatorio_pdf(request):
     # Adicionar os elementos ao PDF
     elements = [title, table]
 
-    # Construir o PDF
-    doc.build(elements)
+    # Gera o PDF
+    doc.build(elements,
+              onFirstPage=lambda c, d: (adicionar_marca_dagua(c, d, nome_usuario, destinatario),
+                                        adicionar_cabecalho_rodape(c, d)),
+              onLaterPages=lambda c, d: (adicionar_marca_dagua(c, d, nome_usuario, destinatario),
+                                        adicionar_cabecalho_rodape(c, d)))
+    
+                
+    # Proteger o PDF com senha usando PyPDF2
+    buffer.seek(0)
+    pdf_reader = PdfReader(buffer)
+    pdf_writer = PdfWriter()
+
+    for page in pdf_reader.pages:
+        pdf_writer.add_page(page)
+
+    # Adicionar senha
+    senhas = senha
+    pdf_writer.encrypt(senhas)
+
+    # Salvar PDF final protegido no response
+    output = BytesIO()
+    pdf_writer.write(output)
+    output.seek(0)
+    response.write(output.read())
+
     return response

@@ -142,8 +142,16 @@
       </div>
       <div class="modal-body">
         <form id="gerarRelatorioForm" action="{% url 'gerar_relatorio_pdf' %}" method="get">
-          <div class="input-group">
-            <input type="text" class="form-control" name="dest" value="{{ request.GET.dest }}" placeholder="Digite o código" maxlength="10"> 
+            <div class="input-group">
+              <div>
+                <label class="ms-2">Destinatário:</label>
+                <input type="text" class="form-control" name="dest" value="{{ request.GET.dest }}" placeholder="Digite o código." maxlength="10"> 
+    
+            </div>
+            <div>
+                <label class="ms-2">Senha do Documento:</label>
+                <input type="text" class="form-control" name="senha" value="{{ request.GET.senha }}" placeholder="Digite a senha."> 
+            </div>
             <input type="hidden" value="{{ request.GET.tipo_prisao }}" name="tipo_prisao">
             <input class="form-control" type="hidden" name="n_pront" value="{{ request.GET.n_pront }}">          
             <input class="form-control" type="hidden" name="n_oficio" value="{{ request.GET.n_oficio }}">          
@@ -151,8 +159,8 @@
             <input class="form-control" type="hidden" name="date_send1" id="" value="{{request.GET.date_send1}}" placeholder="Data Início">
             <input class="form-control" type="hidden" name="date_send2" id="" value="{{request.GET.date_send2}}" placeholder="Data Início">
             
-            <button class="btn btn-danger" type="submit" data-bs-dismiss="modal"><i class="bi bi-send-arrow-down"></i> Enviar</button>
           </div>
+          <button class="btn btn-danger mt-2" type="submit" data-bs-dismiss="modal"><i class="bi bi-send-arrow-down"></i> Enviar</button>
         </form>
         
       </div>

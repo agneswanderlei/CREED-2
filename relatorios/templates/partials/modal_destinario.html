@@ -9,14 +9,6 @@
             <label>Senha do Documento:</label>
             <input type="text" class="form-control" name="senha" value="{{ request.GET.senha }}" placeholder="Digite a senha."> 
         </div>
-        <input type="hidden" value="{{ tipo_prisao }}" name="tipo_prisao">
-        <input class="form-control" type="hidden" name="n_pront2" value="{{ presos }}">
-        <input class="form-control" type="hidden" name="n_oficio2" value="{{ n_oficios }}">          
-        <input class="form-control" type="hidden" name="n_sei" value="{{ n_sei }}">
-        <input class="form-control" type="hidden" name="date_send1" id="" value="{{date_send1}}" placeholder="Data Início">
-        <input class="form-control" type="hidden" name="date_send2" id="" value="{{date_send2}}" placeholder="Data Fm">
-        
-      
     </div>
     <button class="btn btn-danger mt-3" type="submit" data-bs-dismiss="modal"><i class="bi bi-send-arrow-down"></i> Enviar</button>
   </form>
