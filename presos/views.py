@@ -55,6 +55,13 @@ class PresosCreate(CreateView):
     form_class = PresosForm
     success_url = reverse_lazy('presos_list')
 
+    def form_valid(self, form):
+        # Aqui adicionamos o usuário logado no campo modified_by
+        form.instance.modified_by = self.request.user
+        return super().form_valid(form)
+
+    
+
 
 class PresosDetail(DetailView):
     model = models.Presos
@@ -67,6 +74,12 @@ class PresosUpdate(UpdateView):
     form_class = PresosForm
     success_url = reverse_lazy('presos_list')
 
+    def form_valid(self, form):
+        # Aqui adicionamos o usuário logado no campo modified_by
+        form.instance.modified_by = self.request.user
+        return super().form_valid(form)
+
+    
 
 class PresosDelete(DeleteView):
     model = models.Presos

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Tipo_documento(models.Model):
@@ -69,6 +70,12 @@ class Presos(models.Model):
     photo = models.ImageField(upload_to='presos/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
 
     class Meta:
         ordering = ['name_full']
