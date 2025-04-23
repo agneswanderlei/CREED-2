@@ -7,7 +7,6 @@ from usuarios.models import AuditLog
 @receiver(post_save, sender=Presos)
 def log_presos_save(sender, instance, created, **kwargs):
     if created:
-        print(instance.created_at)
         # Registro de criação
         AuditLog.objects.create(
             user=instance.modified_by,  # Assumindo que há um campo modified_by no modelo para capturar o usuário
@@ -15,8 +14,6 @@ def log_presos_save(sender, instance, created, **kwargs):
             description=f"Preso criado: {instance.name_full}",
         )
     else:
-        user = instance.name_full
-        print(f'update {user}')
         # Registro de atualização
         AuditLog.objects.create(
             user=instance.modified_by,

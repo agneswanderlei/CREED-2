@@ -1,11 +1,7 @@
 from django.db import models
 from presos.models import Presos
+from django.conf import settings
 from django.core.validators import FileExtensionValidator
-
-
-
-
-
 
 
 class Situacao(models.Model):
@@ -41,29 +37,23 @@ class Oficios(models.Model):
     )
     anexos = models.FileField(
         upload_to='documentos/',  # Diretório para salvar os arquivos
-        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])],  # Validação de extensões
+        validators=[FileExtensionValidator(allowed_extensions=[
+            'pdf', 'doc', 'docx'
+        ])],  # Validação de extensões
         null=True,
         blank=True
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.n_oficios
-
-
-class OficiosPresos(models.Model):
-    n_oficios = models.ForeignKey(
-        Oficios,
-        on_delete=models.PROTECT,
-        related_name='rel_oficio'
-    )
-    prontuario = models.ForeignKey(
-        Presos,
-        on_delete=models.PROTECT,
-        related_name='rel_presos'
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     def __str__(self):
         return self.n_oficios
+
+

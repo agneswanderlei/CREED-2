@@ -42,6 +42,11 @@ class OficiosCreate(CreateView):
             response_content = list(presos.values())
             return JsonResponse(response_content, safe=False)
         return super().dispatch(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        # Aqui adicionamos o usuario logado no campo modified_by
+        form.instance.modified_by = self.request.user
+        return super().form_valid(form)
 
 
 class OficiosList(ListView):
@@ -98,6 +103,10 @@ class OficiosUpdate(UpdateView):
         self.object = self.get_object()
         print(self.object.date_send)  # Verifique se a data está carregando corretamente
         return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.modified_by = self.request.user
+        return super().form_valid(form)
 
 class OficiosDelete(DeleteView):
     model = models.Oficios

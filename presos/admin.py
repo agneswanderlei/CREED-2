@@ -5,7 +5,6 @@ from .models import (
     Presos,
     Institution,
     PostGrad,
-    Teste
 )
 
 
@@ -40,15 +39,8 @@ class PostGradAdmin(admin.ModelAdmin):
     search_fields = ('name', )
 
 
-class TesteAdmin(admin.ModelAdmin):
-    list_display = ('n_pront',
-                    'name')
-    search_fields = ('name', )
-
-
 admin.site.register(States, StatesAdmin)
 admin.site.register(Tipo_documento, TipoAdmin)
 admin.site.register(Presos, PresosAdmin)
 admin.site.register(Institution, InstitutionAdmin)
 admin.site.register(PostGrad, PostGradAdmin)
-admin.site.register(Teste, TesteAdmin)
