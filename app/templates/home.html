@@ -3,8 +3,47 @@
     Home
 {% endblock title %}
 {% block content %}
-{% include "components/_header.html" %}
-    
+    <div class="container-fluid mt-5 align-content-center">
+        <div>
+            <!-- Filtros -->
+            <form action="{% url 'presos_list' %}" method="get">
+                <div class="row mb-3">
+                    <div class="input-group ps-0">
+                        <select name="posto" class="form-select">
+                        <option value="" {% if not request.GET.posto %} selected {% endif %} >Postos</option>
+                        {% for posto in postos %}
+                            <option value="{{posto.id}}" {% if request.GET.posto == posto.id|stringformat:'s' %} selected {% endif %}> {{posto.name}} </option>
+                        {% endfor %}
+                        </select>
+                        <select name="estado" class="form-select">
+                        <option value="" {% if not request.GET.estado %} selected {% endif %} >Estados</option>
+                        {% for estado in estados %}
+                            <option value="{{estado.id}}" {% if request.GET.estado == estado.id|stringformat:'s' %} selected {% endif %}> {{estado.name}} </option>
+                        {% endfor %}
+                        </select>
+                        <select name="instituicao" class="form-select">
+                        <option value="" {% if not request.GET.instituicao %} selected {% endif %} >Instituições</option>
+                        {% for instituicao in instituicoes %}
+                            <option value="{{instituicao.id}}" {% if request.GET.instituicao == instituicao.id|stringformat:'s' %} selected {% endif %}> {{instituicao.name}} </option>
+                        {% endfor %}
+                        </select>        
+                        <button type="submit" class="btn btn-primary float-end " style="margin-right: 10px;">
+                        <i class="bi bi-search"></i> Pesquisar
+                        </button>
+                    </div>      
+                    
+                    <div class="row mt-2">
+                        {% include "components/_preso_metrics.html" %}
+                    </div>
+                    <div class="row">
+                        <div class="col-6">{{graph_html|safe}}</div>
+                        <div class="col-6">{{graph_html2|safe}}</div>
 
-    <h1>voce esta na homne</h1>
+                    </div>    
+                </div>
+            </form>
+        </div>
+
+    </div>
+
 {% endblock content %}
