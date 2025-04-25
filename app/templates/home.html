@@ -26,6 +26,16 @@
                         {% for instituicao in instituicoes %}
                             <option value="{{instituicao.id}}" {% if request.GET.instituicao == instituicao.id|stringformat:'s' %} selected {% endif %}> {{instituicao.name}} </option>
                         {% endfor %}
+                        </select>
+                        <select class="form-select" aria-label="Default select example" name="tipo_prisao" >
+                            <option value='' {% if not request.GET.tipo_prisao %}selected{% endif %}>Tipo de Prisão</option>
+                            <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %}selected{% endif %}>Aberta</option>
+                            <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %}selected{% endif %}>Fechada</option>
+                            <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %}selected{% endif %}>Semiaberta</option>
+                            <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %}selected{% endif %}>Harmonizada</option>
+                            <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %}selected{% endif %}>Temporária</option>
+                            <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %}selected{% endif %}>Preventiva</option>
+                            <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %}selected{% endif %}>Outros</option>
                         </select>        
                         <button type="submit" class="btn btn-primary float-end " style="margin-right: 10px;">
                         <i class="bi bi-search"></i> Pesquisar
@@ -39,7 +49,11 @@
                         <div class="col-6">{{graph_html|safe}}</div>
                         <div class="col-6">{{graph_html2|safe}}</div>
 
-                    </div>    
+                    </div> 
+                    <div class="row">
+                        <div class="col-6">{{graph_html3|safe}}</div>
+                        
+                    </div>   
                 </div>
             </form>
         </div>
