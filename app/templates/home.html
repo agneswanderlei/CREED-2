@@ -6,7 +6,7 @@
     <div class="container-fluid mt-5 align-content-center">
         <div>
             <!-- Filtros -->
-            <form action="{% url 'presos_list' %}" method="get">
+            <form action="{% url 'home' %}" method="get">
                 <div class="row mb-3">
                     <div class="input-group ps-0">
                         <select name="posto" class="form-select">
@@ -53,6 +53,10 @@
                     <div class="row">
                         <div class="col-4">{{graph_html3|safe}}</div>
                         <div class="col-8">{{graph_html4|safe}}</div>
+                        
+                    </div>   
+                    <div class="row">
+                        <div class="col-6">{{graph_html5|safe}}</div>
                         
                     </div>   
                 </div>
