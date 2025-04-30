@@ -6,61 +6,62 @@
     <div class="container-fluid mt-5 align-content-center">
         <div>
             <!-- Filtros -->
-            <form action="{% url 'home' %}" method="get">
+            <form id="filter-form" hx-get="{% url 'home' %}" hx-target="#graph-container" hx-trigger="change">
                 <div class="row mb-3">
                     <div class="input-group ps-0">
                         <select name="posto" class="form-select">
-                        <option value="" {% if not request.GET.posto %} selected {% endif %} >Postos</option>
-                        {% for posto in postos %}
-                            <option value="{{posto.id}}" {% if request.GET.posto == posto.id|stringformat:'s' %} selected {% endif %}> {{posto.name}} </option>
-                        {% endfor %}
+                            <option value="" {% if not request.GET.posto %} selected {% endif %}>Postos</option>
+                            {% for posto in postos %}
+                                <option value="{{posto.id}}" {% if request.GET.posto == posto.id|stringformat:'s' %} selected {% endif %}>{{posto.name}}</option>
+                            {% endfor %}
                         </select>
+            
                         <select name="estado" class="form-select">
-                        <option value="" {% if not request.GET.estado %} selected {% endif %} >Estados</option>
-                        {% for estado in estados %}
-                            <option value="{{estado.id}}" {% if request.GET.estado == estado.id|stringformat:'s' %} selected {% endif %}> {{estado.name}} </option>
-                        {% endfor %}
+                            <option value="" {% if not request.GET.estado %} selected {% endif %}>Estados</option>
+                            {% for estado in estados %}
+                                <option value="{{estado.id}}" {% if request.GET.estado == estado.id|stringformat:'s' %} selected {% endif %}>{{estado.name}}</option>
+                            {% endfor %}
                         </select>
+            
                         <select name="instituicao" class="form-select">
-                        <option value="" {% if not request.GET.instituicao %} selected {% endif %} >Instituições</option>
-                        {% for instituicao in instituicoes %}
-                            <option value="{{instituicao.id}}" {% if request.GET.instituicao == instituicao.id|stringformat:'s' %} selected {% endif %}> {{instituicao.name}} </option>
-                        {% endfor %}
+                            <option value="" {% if not request.GET.instituicao %} selected {% endif %}>Instituições</option>
+                            {% for instituicao in instituicoes %}
+                                <option value="{{instituicao.id}}" {% if request.GET.instituicao == instituicao.id|stringformat:'s' %} selected {% endif %}>{{instituicao.name}}</option>
+                            {% endfor %}
                         </select>
-                        <select class="form-select" aria-label="Default select example" name="tipo_prisao" >
-                            <option value='' {% if not request.GET.tipo_prisao %}selected{% endif %}>Tipo de Prisão</option>
-                            <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %}selected{% endif %}>Aberta</option>
-                            <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %}selected{% endif %}>Fechada</option>
-                            <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %}selected{% endif %}>Semiaberta</option>
-                            <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %}selected{% endif %}>Harmonizada</option>
-                            <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %}selected{% endif %}>Temporária</option>
-                            <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %}selected{% endif %}>Preventiva</option>
-                            <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %}selected{% endif %}>Outros</option>
-                        </select>        
-                        <button type="submit" class="btn btn-primary float-end " style="margin-right: 10px;">
-                        <i class="bi bi-search"></i> Pesquisar
-                        </button>
-                    </div>      
-                    
-                    <div class="row mt-2">
-                        {% include "components/_preso_metrics.html" %}
-                    </div>
-                    <div class="row">
-                        <div class="col-6">{{graph_html|safe}}</div>
-                        <div class="col-6">{{graph_html2|safe}}</div>
-
-                    </div> 
-                    <div class="row">
-                        <div class="col-4">{{graph_html3|safe}}</div>
-                        <div class="col-8">{{graph_html4|safe}}</div>
-                        
-                    </div>   
-                    <div class="row">
-                        <div class="col-6">{{graph_html5|safe}}</div>
-                        
+            
+                        <select name="tipo_prisao" class="form-select">
+                            <option value="" {% if not request.GET.tipo_prisao %} selected {% endif %}>Tipo de Prisão</option>
+                            <option value="ABERTA" {% if request.GET.tipo_prisao == "ABERTA" %} selected {% endif %}>Aberta</option>
+                            <option value="FECHADA" {% if request.GET.tipo_prisao == "FECHADA" %} selected {% endif %}>Fechada</option>
+                            <option value="SEMIABERTA" {% if request.GET.tipo_prisao == "SEMIABERTA" %} selected {% endif %}>Semiaberta</option>
+                            <option value="HARMONIZADA" {% if request.GET.tipo_prisao == "HARMONIZADA" %} selected {% endif %}>Harmonizada</option>
+                            <option value="TEMPORARIA" {% if request.GET.tipo_prisao == "TEMPORARIA" %} selected {% endif %}>Temporária</option>
+                            <option value="PREVENTIZA" {% if request.GET.tipo_prisao == "PREVENTIZA" %} selected {% endif %}>Preventiva</option>
+                            <option value="OUTROS" {% if request.GET.tipo_prisao == "OUTROS" %} selected {% endif %}>Outros</option>
+                        </select>  
                     </div>   
                 </div>
             </form>
+            <div id="graph-container">
+                <div class="row mt-2">
+                    {% include "components/_preso_metrics.html" %}
+                </div>
+                <div class="row">
+                    <div class="col-6">{{graph_html|safe}}</div>
+                    <div class="col-6">{{graph_html2|safe}}</div>
+    
+                </div> 
+                <div class="row">
+                    <div class="col-4">{{graph_html3|safe}}</div>
+                    <div class="col-8">{{graph_html4|safe}}</div>
+                    
+                </div>   
+                <div class="row">
+                    <div class="col-6">{{graph_html5|safe}}</div>
+                    
+                </div>   
+            </div>
         </div>
 
     </div>

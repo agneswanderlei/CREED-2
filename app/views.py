@@ -210,5 +210,7 @@ def home(request):
         'instituicoes': Institution.objects.all(),
 
     }
-
+    if request.headers.get("HX-Request"):
+        return render(request, "components/_graph_section.html", context)
+    
     return render(request, 'home.html', context=context)
